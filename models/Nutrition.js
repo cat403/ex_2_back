@@ -12,5 +12,5 @@ const nutritionSchema = Schema({
   ],
   savedMeals: [{ foodName: String, calories: Number }],
 });
-
-export default nutritionSchema;
+const Nutrition = mongoose.model(Nutrition, nutritionSchema);
+export default Nutrition;
