@@ -1,5 +1,6 @@
 const express = require("express");
 const trying = require("./routes/trying");
+const login = require("./routes/login");
 const cors = require("cors");
 const dbConnect = require("./dbConnect.js");
 require("dotenv").config();
@@ -9,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/try", trying);
+app.use("/login", login);
 dbConnect();
 app.get("/", (req, res) => {
   res.send("OK");
