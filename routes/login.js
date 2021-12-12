@@ -9,14 +9,16 @@ router.get("/new-user", async (req, res) => {
 });
 router.post("/new-user", async (req, res) => {
   if (req.body.action === "signup") {
+    if (!(req.body.action && req.body.userName && req.body.email)) {
+      return res.json({ error: "There are missing fields" });
+    }
     const newUser = { ...req.body, _id: mongoose.Types.ObjectId() };
-    console.log(newUser);
     const createNewUser = new User(newUser);
     try {
       const userNameExists = await User.exists({ userName: req.body.userName });
       if (userNameExists) {
         return res.json({
-          error: `User name ${req.body.userName}is already in use`,
+          error: `User name ${req.body.userName} is already in use`,
         });
       }
     } catch (error) {
@@ -32,25 +34,24 @@ router.post("/new-user", async (req, res) => {
     }
     try {
       const createdNewUser = await createNewUser.save();
-      console.log(createdNewUser);
       res.json(createdNewUser);
     } catch (error) {
-      console.error("THIS IS ERROR", error);
+      console.error(error);
       res.json({
         error:
           "Something went wrong with the process please double check the information and try again",
       });
     }
   }
-
-  //   try {
-  //     const createNewUser = new User(newUser);
-  //     const createdNewUser = await createNewUser.save();
-  //     console.log(createdNewUser);
-  //   } catch (error) {
-  //     console.error(error);
-  //     process.exit(1);
-  //   }
+  if (req.body.action === "check availability") {
+    try {
+      const checkValue = { userName: req.body.userName };
+      const available = !(await User.exists(checkValue));
+      res.json({ available });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 });
 //Handling the login
 router.get("/existing-user", async (req, res) => {
