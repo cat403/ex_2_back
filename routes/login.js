@@ -8,15 +8,39 @@ router.get("/new-user", async (req, res) => {
   res.send("hi");
 });
 router.post("/new-user", async (req, res) => {
-  const newUser = { ...req.body, _id: mongoose.Types.ObjectId() };
-  console.log(newUser);
-  const createNewUser = new User(newUser);
-  try {
-    const createdNewUser = await createNewUser.save();
-    console.log(createdNewUser);
-  } catch (error) {
-    console.error("THIS IS ERROR", error);
-    res.json({ error: "duplicate", field: error.keyValue });
+  if (req.body.action === "signup") {
+    const newUser = { ...req.body, _id: mongoose.Types.ObjectId() };
+    console.log(newUser);
+    const createNewUser = new User(newUser);
+    try {
+      const userNameExists = await User.exists({ userName: req.body.userName });
+      if (userNameExists) {
+        return res.json({
+          error: `User name ${req.body.userName}is already in use`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    try {
+      const emailExists = await User.exists({ email: req.body.email });
+      if (emailExists) {
+        return res.json({ error: `Email ${req.body.email} is already in use` });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      const createdNewUser = await createNewUser.save();
+      console.log(createdNewUser);
+      res.json(createdNewUser);
+    } catch (error) {
+      console.error("THIS IS ERROR", error);
+      res.json({
+        error:
+          "Something went wrong with the process please double check the information and try again",
+      });
+    }
   }
 
   //   try {
