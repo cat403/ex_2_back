@@ -9,6 +9,7 @@ const userSchema = {
   goal: Number,
   rmr: Number,
   avatarImage: { data: Buffer, contentType: String },
+  savedMeals: [{ foodName: String, calories: Number }],
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;
