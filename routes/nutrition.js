@@ -16,27 +16,12 @@ router.post("/", async (req, res) => {
   if (!(req.body.calories && req.body.foodName && req.body._id)) {
     return res.json({ error: "Missing fields" });
   }
-  const currentDate = new Date().toISOString().slice(0, 10);
-  console.log(currentDate, req.body);
-  try {
-    const dailyEntry = await Nutrition.findOneAndUpdate(
-      {
-        _id: req.body._id,
-        date: currentDate,
-      },
-      {
-        $set: { date: currentDate },
-        $inc: { total: req.body.calories },
-        $push: {
-          meals: { foodName: req.body.foodName, calories: req.body.calories },
-        },
-      },
-      { new: true, upsert: true }
-    );
-    console.log("DAILY ENTRY", dailyEntry);
-  } catch (error) {
-    console.error(error);
+  if (isNaN(req.body.calories)) {
+    return res.json({
+      error: "Please enter a number in the calories field",
+    });
   }
+  const currentDate = new Date().toISOString().slice(0, 10);
   if (req.body.save) {
     try {
       const savedMeals = await User.findOneAndUpdate(
@@ -56,11 +41,52 @@ router.post("/", async (req, res) => {
       console.error(error);
     }
   }
-  //   console.log(req.body);
-  //   const newMealEntry = await Nutrition.findOneAndUpdate(
-  //     { user: req.body._id , date:  },
-  //     { $push: { dailyLog: req.body } , $inc: {dailylog total} }
-  //   );
-  //   console.log(newMealEntry);
+
+  try {
+    const dailyEntry = await Nutrition.findOneAndUpdate(
+      {
+        user: req.body._id,
+        date: currentDate,
+      },
+      {
+        $set: { user: req.body._id },
+        $set: { date: currentDate },
+        $inc: { total: req.body.calories },
+        $push: {
+          meals: { foodName: req.body.foodName, calories: req.body.calories },
+        },
+      },
+      { new: true, upsert: true }
+    );
+    return res.json({
+      date: dailyEntry.date,
+      meals: dailyEntry.meals,
+      todayTotalCalories: dailyEntry.total,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      error: "There was a problem adding your meal please check your input",
+    });
+  }
+  //   if (req.body.save) {
+  //     try {
+  //       const savedMeals = await User.findOneAndUpdate(
+  //         { _id: req.body._id },
+  //         {
+  //           $push: {
+  //             savedMeals: {
+  //               foodName: req.body.foodName,
+  //               calories: req.body.calories,
+  //             },
+  //           },
+  //         },
+  //         { new: true }
+  //       );
+  //       console.log("SAVED MEALS", savedMeals);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
 });
 module.exports = router;
