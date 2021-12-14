@@ -5,12 +5,12 @@ const nutritionSchema = Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
   dailyLog: [
     {
-      date: DATE,
+      date: Date,
       total: Number,
       meals: [{ foodName: String, calories: Number }],
     },
   ],
   savedMeals: [{ foodName: String, calories: Number }],
 });
-const Nutrition = mongoose.model(Nutrition, nutritionSchema);
-export default Nutrition;
+const Nutrition = mongoose.model("Nutrition", nutritionSchema);
+module.exports = Nutrition;
