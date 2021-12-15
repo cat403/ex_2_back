@@ -12,6 +12,24 @@ router.get("/", (req, res) => {
 //   total: Number,
 //   meals: [{ foodName: String, calories: Number }],
 // });
+router.get("/:id", async (req, res) => {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const userId = req.params.id;
+    const dailySummary = await Nutrition.find({
+      userName: userId,
+      date: today,
+    });
+    res.json({
+      meals: dailySummary[0].meals,
+      totalCalories: dailySummary[0].total,
+    });
+    console.log("today", dailySummary[0].total);
+  } catch (error) {
+    console.error(error);
+  }
+  console.log(req.params.id);
+});
 router.post("/", async (req, res) => {
   if (!(req.body.calories && req.body.foodName && req.body._id)) {
     return res.json({ error: "Missing fields" });
@@ -69,24 +87,6 @@ router.post("/", async (req, res) => {
       error: "There was a problem adding your meal please check your input",
     });
   }
-  //   if (req.body.save) {
-  //     try {
-  //       const savedMeals = await User.findOneAndUpdate(
-  //         { _id: req.body._id },
-  //         {
-  //           $push: {
-  //             savedMeals: {
-  //               foodName: req.body.foodName,
-  //               calories: req.body.calories,
-  //             },
-  //           },
-  //         },
-  //         { new: true }
-  //       );
-  //       console.log("SAVED MEALS", savedMeals);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
 });
+router.delete("/", (req, res) => {});
 module.exports = router;
