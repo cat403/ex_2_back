@@ -2,6 +2,7 @@ const express = require("express");
 const trying = require("./routes/trying");
 const login = require("./routes/login");
 const nutrition = require("./routes/nutrition");
+const fitness = require("./routes/fitness");
 const cors = require("cors");
 const dbConnect = require("./dbConnect.js");
 require("dotenv").config();
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/try", trying);
 app.use("/login", login);
 app.use("/nutrition", nutrition);
+app.use("/fitness", fitness);
 dbConnect();
 app.get("/", (req, res) => {
   res.send("OK");

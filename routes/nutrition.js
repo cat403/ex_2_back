@@ -24,11 +24,9 @@ router.get("/:id", async (req, res) => {
       meals: dailySummary[0].meals,
       totalCalories: dailySummary[0].total,
     });
-    console.log("today", dailySummary[0].total);
   } catch (error) {
     console.error(error);
   }
-  console.log(req.params.id);
 });
 router.post("/", async (req, res) => {
   if (!(req.body.calories && req.body.foodName && req.body._id)) {
@@ -54,7 +52,6 @@ router.post("/", async (req, res) => {
         },
         { new: true }
       );
-      console.log("SAVED MEALS", savedMeals);
     } catch (error) {
       console.error(error);
     }
