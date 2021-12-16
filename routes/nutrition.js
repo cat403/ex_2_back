@@ -88,5 +88,32 @@ router.post("/", async (req, res) => {
     });
   }
 });
-router.delete("/", (req, res) => {});
+router.delete("/:id", async (req, res) => {
+  const user = req.params.id;
+  const today = new Date().toISOString().slice(0, 10);
+  const mealId = req.query.meal;
+  let calories;
+  try {
+    const objectToBeDeleted = await Nutrition.findOne({ user, date: today });
+    objectToBeDeleted.meals.map((mealObject) => {
+      if (mealId == mealObject._id) {
+        calories = mealObject.calories;
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  try {
+    const newMealList = await Nutrition.findOneAndUpdate(
+      { user, date: today },
+      { $pull: { meals: { _id: mealId } }, $inc: { total: -calories } },
+      { new: true }
+    );
+    res.json({ meals: newMealList.meals, total: newMealList.total });
+  } catch (error) {
+    console.error(error);
+    res.json({ error: "delete unsuccessful" });
+  }
+  console.log("SENT DATA", user, mealId);
+});
 module.exports = router;
