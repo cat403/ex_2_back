@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const fitnessSchema = Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
-  dailyLog: [{ date: Date, caloriesBurned: Number }],
   savedWorkouts: [
     {
       name: String,
@@ -19,4 +18,4 @@ const fitnessSchema = Schema({
   ],
 });
 const Fitness = mongoose.model("Fitness", fitnessSchema);
-export default Fitness;
+module.exports = Fitness;

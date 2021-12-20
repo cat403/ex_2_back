@@ -10,7 +10,7 @@ const userSchema = {
   rmr: Number,
   avatarImage: { data: Buffer, contentType: String },
   savedMeals: [{ foodName: String, calories: Number }],
-  burnedCalories: [],
+  burnedCalories: [{ date: Date, caloriesBurned: Number }],
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;
