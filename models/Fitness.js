@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const fitnessSchema = Schema({
   user: { type: Schema.Types.ObjectId, ref: "User" },
-  dailyLog: { date: Date, caloriesBurned: Number },
+  dailyLog: [{ date: Date, caloriesBurned: Number }],
   savedWorkouts: [
     {
       name: String,
