@@ -45,6 +45,8 @@ router.post("/:id/calories", async (req, res) => {
 });
 router.get("/:id", async (req, res) => {
   try {
+    const userFitness = await Fitness.findOne({ user: req.params.id });
+    res.json({ exercises: userFitness.savedWorkouts });
   } catch (error) {
     console.error(error);
     res.json({ error: "Couldn't find user" });
@@ -82,7 +84,18 @@ router.post("/:id", async (req, res) => {
   }
   // save exercises
 });
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
+  try {
+    const updatedExerciseList = await Fitness.findOneAndUpdate(
+      { user: req.params.id },
+      { $pull: { savedWorkouts: { _id: req.query.exercise } } },
+      { new: true }
+    );
+    res.json({ exercise: updatedExerciseList });
+  } catch (error) {
+    res.json({ error: "Couldn't complete delete" });
+    console.error(error);
+  }
   //delete an exercise
 });
 
