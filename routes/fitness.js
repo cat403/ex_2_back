@@ -1,13 +1,14 @@
 const express = require("express");
 const Fitness = require("../models/Fitness");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/", (req, res) => {
   //test.
   res.send("fitness");
 });
-router.get("/:id/calories", async (req, res) => {
+router.get("/:id/calories", auth, async (req, res) => {
   const today = new Date(new Date().toISOString().slice(0, 10));
 
   try {
@@ -28,7 +29,7 @@ router.get("/:id/calories", async (req, res) => {
   }
   //get todays calories burned
 });
-router.post("/:id/calories", async (req, res) => {
+router.post("/:id/calories", auth, async (req, res) => {
   const userId = req.params.id;
   const calories = req.body.calories;
   const today = new Date().toISOString().slice(0, 10);
@@ -43,7 +44,7 @@ router.post("/:id/calories", async (req, res) => {
     console.error(error);
   }
 });
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
     const userFitness = await Fitness.findOne({ user: req.params.id });
     res.json({ exercises: userFitness.savedWorkouts });
@@ -53,7 +54,7 @@ router.get("/:id", async (req, res) => {
   }
   //get exercises
 });
-router.post("/:id", async (req, res) => {
+router.post("/:id", auth, async (req, res) => {
   const exercise = { ...req.body };
   delete exercise.routine;
   const routine = req.body.routine;
@@ -84,7 +85,7 @@ router.post("/:id", async (req, res) => {
   }
   // save exercises
 });
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const updatedExerciseList = await Fitness.findOneAndUpdate(
       { user: req.params.id },

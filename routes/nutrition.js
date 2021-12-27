@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Nutrition = require("../models/Nutrition");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 const router = express.Router();
 router.get("/", (req, res) => {
   res.send("got it");
@@ -12,7 +13,7 @@ router.get("/", (req, res) => {
 //   total: Number,
 //   meals: [{ foodName: String, calories: Number }],
 // });
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
     const today = new Date().toISOString().slice(0, 10);
     const userId = req.params.id;
@@ -28,7 +29,7 @@ router.get("/:id", async (req, res) => {
     console.error(error);
   }
 });
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   if (!(req.body.calories && req.body.foodName && req.body._id)) {
     return res.json({ error: "Missing fields" });
   }
@@ -85,7 +86,7 @@ router.post("/", async (req, res) => {
     });
   }
 });
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const user = req.params.id;
   const today = new Date().toISOString().slice(0, 10);
   const mealId = req.query.meal;
@@ -111,6 +112,5 @@ router.delete("/:id", async (req, res) => {
     console.error(error);
     res.json({ error: "delete unsuccessful" });
   }
-  console.log("SENT DATA", user, mealId);
 });
 module.exports = router;

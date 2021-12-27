@@ -11,6 +11,8 @@ const userSchema = {
   avatarImage: { data: Buffer, contentType: String },
   savedMeals: [{ foodName: String, calories: Number }],
   burnedCalories: [{ date: Date, caloriesBurned: Number }],
+  verified: { type: Boolean, default: false },
+  password: { type: String, required: true },
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;
