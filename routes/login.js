@@ -93,6 +93,7 @@ router.post("/existing-user", async (req, res) => {
       {
         email: existingUser.email,
         id: existingUser._id,
+        userName: existingUser.userName,
       },
       process.env.SECRET,
       { expiresIn: "2h" }
