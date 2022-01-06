@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 const router = express.Router();
 
 //Handling the sign-up of new users
@@ -71,10 +72,18 @@ router.post("/new-user", async (req, res) => {
     }
   }
 });
-//Handling the login
-router.get("/existing-user", async (req, res) => {
-  res.send("there");
+// Get users information
+router.get("/existing-user/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    let sanUser = user._doc;
+    delete sanUser.password;
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+  }
 });
+//Handling the login
 router.post("/existing-user", async (req, res) => {
   const { userName, password } = req.body;
   try {
